@@ -1,0 +1,271 @@
+
+public class cdlltest {
+    /* 
+       Author: Dustin Hu
+       Date: 29-11-2014
+       Purpose: To demonstrate the circular doubly linked list 
+     */
+
+    public static void main(String[] args) {
+	CircularList a = new CircularList(0);
+	a.insertLeft(3, 14);
+	a.insertLeft(6, 17);
+	System.out.println(a.toStringLeft());
+	a.insertLeft(5, 6);
+	System.out.println(a.toStringLeft());
+	a.insertLeft(4, 6);
+	System.out.println(a.toStringLeft());
+
+	System.out.println("Done lefts");
+	System.out.println(a.toStringRight());
+	System.out.println(a.pop().data);
+	System.out.println(a.toStringRight());
+    }
+
+}
+
+class Node {
+    /*
+      Author: DUstin Hu
+      Date: 29-11-2014
+      Purpose: To be a node
+
+      Fields:
+          left: The left node
+	  right: The right node
+	  data: The data
+
+      Methods:
+          Node: Constructor with no inputs
+	  Node: Constructor with two inputs
+     */
+
+    public int data;
+    public Node left;
+    public Node right;
+
+    public Node(){
+	// Author: Dustin Hu
+	// Date: 29-11-2014
+	// Purpose: TO cerate the node
+	// Input: None
+	// OUtput: None
+	this.data = 0;
+	this.left = null;
+	this.right = null;
+    }
+    public Node(int data){
+	// Author: Dustin Hu
+	// Date: 29-11-2014
+	// Purpose: TO cerate the node
+	// Input: The data
+	// Output: None
+	this.data = data;
+	this.left = null;
+	this.right = null;
+
+    }
+
+
+}
+
+class CircularList{
+    /*
+      Author: Dustin Hu
+      Date: 29-11-2014
+      Purpoes: To be the circular, doubly linked list
+      
+      Fields: 
+          header: The header node
+
+      Methods:
+          CircularList: Consturcotr with no parameters
+	  CircularList: Consturcotr with one parameter
+	  numNodes: Gets the number of nodes
+	  toStringLeft: Creates a string of the values going left
+	  toSTringRight: Cerateas a stirng of the values going right
+	  inList: Checks if a value is in the list
+	  insertLeft: Inserts a node to teh left of a given value
+	  find: Finds a node given the value
+	  pop: Pops the last node
+     */
+
+    protected Node header;
+    
+    public CircularList (){
+	// Author: Dustin Hu
+	// Date: 29-11-2014
+	// Purpose: to cerate the list
+	// Input: None
+	// Output: None
+	this(0);
+    }
+    public CircularList(int data){
+	// Author: DUstin Hu
+	// Date: 29-11-2014
+	// Purpose: To create the cirucalr list
+	// Input: The number of nodes
+	// Output: None
+	this.header = new Node(data);
+	this.header.left = this.header;
+	this.header.right = this.header;
+	
+    }
+    public int numNodes (){
+	// Autohr: DUsitn Hu
+	// Date: 30-11-2014
+	// Purpose: To get the number of nodes
+	// Input: None
+	// Output: THe number of nodes, an integer
+	return this.header.data;
+    }
+    public String toStringLeft(){
+	// Author: DUstin Hu
+	// Date: 30-11-2014
+	// Purpoes: To prnt all the list values going left
+	// Input: None
+	// Output: A string, containing the values
+	String output = "";
+	Node current = this.header.left;
+
+	for (int i = 0; i < this.numNodes()  && current != this.header; i++){
+	    output = output + current.data;
+	    if (i < this.numNodes() - 1){
+		output = output + " <-> ";
+	    }
+	    current = current.left;
+	}
+	output = output + " [" + this.numNodes() + "]";
+	return output;
+    }
+    public String toStringRight(){
+	// Author: DUstin Hu
+	// Date: 30-11-2014
+	// Purpoes: To print all the list values going right
+	// Input: None
+	// Output: A string containing the nodes
+
+	String output = "";
+	Node current = this.header.right;
+
+	for (int i = 0; i < this.numNodes() && current != this.header; i++){
+	    output = output + current.data;
+	    if (i < this.numNodes() - 1){
+		output = output + " <-> ";
+	    }
+	    current = current.right;
+	}
+	output = output + " [" + this.numNodes() + "]";
+	return output;
+    }
+    public boolean inList(int data){
+	// Author: Dustin Hu
+	// Date: 30-11-2014
+	// Purpoes: To check if a node is in the list
+	// Input: The data to check
+	// output: Boolean true if found, false if not
+	boolean output = false;
+	Node current = this.header.right;
+	for (int i = 0; i < this.numNodes() && output == false ; i++){
+	    if (current.data == data){
+		output = true;
+	    }
+	    else{
+		current = current.right;
+	    }
+	}
+	return output;
+	
+    }
+    public void insertLeft (int data, int target){
+	// Author: DUstin Hu
+	// Date: 30-11-2014
+	// Purpoes: To inselt a node to the left of its target
+	// Input: The data for the new node and the target
+	// Output: None
+	boolean walk = true;
+	Node input = new Node(data);
+	Node current;
+	Node before;
+
+	if (this.inList(target) == false){
+	    input.right = this.header;
+	    input.left = this.header.left;
+	    this.header.left.right = input;
+	    this.header.left = input;
+	}
+	else{
+	    // The right of the target now points to the input, 
+	    // The input's 'left now points to what was once the right of the target
+	    // The target's left now points to the input
+	    // The input's right now points to the input
+	    
+	    current = this.find(target);
+
+	    input.left = current.left;
+	    input.right = current;
+	    
+	    current.left.right = input;
+	    current.left = input;
+	    
+	    
+
+	    // input.left = current.left;
+	    // current.right = input;
+	    // input.right = current;
+	    // current.left = input;
+	}
+
+	this.header.data = this.header.data + 1;
+    }
+    public Node find(int target){
+	// Author: Dustin H
+	// Date: 30-11-2014
+	// Purpose: To find the node
+	// Input: THe data of the node to find
+	// Output: Null if not found, otherwise, the node.
+	Node output = null;
+	Node current = header.left;
+	boolean walk = true;
+
+	int i = 0;
+	if (this.inList(target) == false){
+	    output = null;
+	}
+	else{
+	    while (walk == true){
+		if (current.data == target){
+		    walk = false;
+		    output = current;
+		}
+		else{
+		    current = current.left;
+		}
+	    }
+	}
+	return output;
+    }
+    public Node pop(){
+	// AUthor: Dustin Hu
+	// Date: 1-12-2014
+	// Purpose: To return the last node
+	// Input: None
+	// Output: THe last node of tihs list
+	Node output = this.header.left;
+	this.header.left = this.header.left.left;
+	this.header.left.left.right = this.header;
+	output.left = null;
+	output.right = null;
+
+	return output;
+    }
+    // public CircularList splitInTwo(){
+    // 	// Autohr: Dusitn Hu
+    // 	// Date: 1-12-2014
+    // 	// Purpose: To split the list in two if there are an even number of nodes, otherwise, return null
+    // 	// Input: None
+    // 	// OUtput: A circularlist, split in two.
+	
+    // }
+    
+}
